@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="stylesheet" href="project.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supernova — Equipamentos Esportivos</title>
+
+</head>
+<body>
+
+<div class="cosmic-bg"></div>
+<div class="stars" id="starsContainer"></div>
+
+<header>
+  <div class="logo">SUPERNOVA</div>
+  <nav>
+    <a href="#">Inicio</a>
+    <a href="#produtos">Produtos</a>
+    <a href="#">Descontos</a>
+    <a href="#">Contato</a>
+  </nav>
+  <button class="cart-btn" onclick="openCart()">
+    <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59L5.25 14c-.24.45-.39.96-.39 1.5 0 1.66 1.34 3 3 3h12v-2H8.62c-.83 0-1.5-.67-1.5-1.5l.01-.27.75-1.73h7.62c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 19.96 2H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+    <span class="cart-count" id="cartCount">0</span>
+  </button>
+</header>
+
+<div class="discount-banner">
+  EXPLOSAO DE PRECOS — Ate 35% OFF na Black Friday (28/11) e Natal (25/12)! Frete gratis acima de R$299
+</div>
+
+<div class="banner">
+  <div class="supernova-burst"></div>
+  <div class="supernova-ring"></div>
+  <h1>Equipamentos que <span class="glow">explodem</span> limites</h1>
+  <p>Boxe | Musculacao | Treino em Casa | Cardio</p>
+  <span class="subtitle-tag">Mais de 5.000 atletas atendidos</span>
+</div>
+
+<div class="categories">
+  <button class="cat-btn active" data-cat="todos">Todos</button>
+  <button class="cat-btn" data-cat="boxe">Boxe</button>
+  <button class="cat-btn" data-cat="musculacao">Musculacao</button>
+  <button class="cat-btn" data-cat="treino-casa">Treino em Casa</button>
+  <button class="cat-btn" data-cat="cardio">Cardio</button>
+</div>
+
+<div class="products-section" id="produtos">
+  <div class="products-grid" id="productsGrid"></div>
+</div>
+
+<footer>
+  <div class="brand">SUPERNOVA</div>
+  <p style="margin-top:8px;">2026 Supernova Esportes — Exploda seus limites.</p>
+  <p style="margin-top:6px;">Frete gratis acima de R$299 | Entrega 3-7 dias uteis | Atendimento via chat</p>
+</footer>
+
+<!-- CARRINHO DRAWER -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-drawer-header">
+    <h3>Meu Carrinho</h3>
+    <button class="cart-close-btn" onclick="closeCart()">&#10005;</button>
+  </div>
+  <div class="cart-drawer-body" id="cartBody">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">&#128722;</div>
+      <p>Seu carrinho esta vazio</p>
+      <span>Adicione produtos para comecar</span>
+    </div>
+  </div>
+  <div class="cart-drawer-footer" id="cartFooter" style="display:none;">
+    <div class="cart-summary-row"><span class="label">Subtotal</span><span class="value" id="cartSubtotal">R$ 0,00</span></div>
+    <div class="cart-summary-row"><span class="label">Frete</span><span class="value" id="cartFrete">R$ 0,00</span></div>
+    <div class="cart-summary-total"><span class="label">Total</span><span class="value" id="cartTotal">R$ 0,00</span></div>
+    <button class="btn-checkout" id="btnCheckout" onclick="openCheckout()">Finalizar compra</button>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="checkout-overlay" id="checkoutOverlay">
+  <div class="checkout-modal">
+    <div class="checkout-header">
+      <h2>Finalizar Compra</h2>
+      <button class="checkout-close" onclick="closeCheckout()">&#10005;</button>
+    </div>
+    <div class="checkout-steps">
+      <button class="step-tab active" id="stepTab1" onclick="goToStep(1)">1. Dados</button>
+      <button class="step-tab" id="stepTab2" onclick="goToStep(2)">2. Entrega</button>
+      <button class="step-tab" id="stepTab3" onclick="goToStep(3)">3. Resumo</button>
+    </div>
+    <div class="checkout-body">
+      <!-- PASSO 1 -->
+      <div class="step-content active" id="step1">
+        <div class="form-group">
+          <label for="ckCpf">CPF</label>
+          <input type="text" id="ckCpf" placeholder="000.000.000-00" maxlength="14" oninput="maskCpf(this)">
+          <div class="form-error" id="errCpf">Informe um CPF valido</div>
+        </div>
+        <div class="form-group">
+          <label for="ckEmail">E-mail</label>
+          <input type="email" id="ckEmail" placeholder="seu@email.com">
+          <div class="form-error" id="errEmail">Informe um e-mail valido</div>
+        </div>
+        <div class="form-group">
+          <label for="ckSenha">Senha</label>
+          <input type="password" id="ckSenha" placeholder="Min. 6 caracteres">
+          <div class="form-error" id="errSenha">A senha deve ter no minimo 6 caracteres</div>
+          <div class="form-hint">Para acessar seus pedidos depois</div>
+        </div>
+        <div class="form-group">
+          <label for="ckTel">Telefone</label>
+          <input type="text" id="ckTel" placeholder="(00) 00000-0000" maxlength="15" oninput="maskTel(this)">
+          <div class="form-error" id="errTel">Informe um numero de telefone valido</div>
+        </div>
+        <button class="btn-next-step" onclick="validateStep1()">Continuar para entrega</button>
+      </div>
+
+      <!-- PASSO 2 -->
+      <div class="step-content" id="step2">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="ckCep">CEP</label>
+            <input type="text" id="ckCep" placeholder="00000-000" maxlength="9" oninput="maskCep(this)">
+            <div class="form-error" id="errCep">CEP invalido</div>
+          </div>
+          <div class="form-group">
+            <label for="ckNum">Numero</label>
+            <input type="text" id="ckNum" placeholder="Ex: 123">
+            <div class="form-error" id="errNum">Informe o numero</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="ckRua">Rua</label>
+          <input type="text" id="ckRua" placeholder="Nome da rua">
+          <div class="form-error" id="errRua">Informe a rua</div>
+        </div>
+        <div class="form-group">
+          <label for="ckComp">Complemento</label>
+          <input type="text" id="ckComp" placeholder="Apto, bloco, sala (opcional)">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="ckBairro">Bairro</label>
+            <input type="text" id="ckBairro" placeholder="Bairro">
+            <div class="form-error" id="errBairro">Informe o bairro</div>
+          </div>
+          <div class="form-group">
+            <label for="ckCidade">Cidade</label>
+            <input type="text" id="ckCidade" placeholder="Cidade">
+            <div class="form-error" id="errCidade">Informe a cidade</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="ckEstado">Estado</label>
+          <input type="text" id="ckEstado" placeholder="UF" maxlength="2">
+          <div class="form-error" id="errEstado">Informe o estado (UF)</div>
+        </div>
+        <button class="btn-next-step" onclick="validateStep2()">Continuar para resumo</button>
+        <button class="btn-back-step" onclick="goToStep(1)">Voltar</button>
+      </div>
+
+      <!-- PASSO 3 -->
+      <div class="step-content" id="step3">
+        <div class="checkout-resumo" id="checkoutResumo"></div>
+        <div class="checkout-success" id="checkoutSuccess" style="display:none;">
+          <div class="check-big">&#10003;</div>
+          <h3>Pedido realizado!</h3>
+          <p>Obrigado por comprar na Supernova. Voce recebera os detalhes por e-mail. Seu pedido chegara em 3-7 dias uteis.</p>
+          <button class="btn-next-step" onclick="finishAll()" style="margin-top:18px;">Fechar</button>
+        </div>
+        <div id="confirmArea">
+          <button class="btn-next-step" onclick="confirmOrder()">Confirmar pedido</button>
+          <button class="btn-back-step" onclick="goToStep(2)">Voltar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ANTIGO -->
+<div class="modal-overlay" id="thankModal">
+  <div class="thank-card">
+    <div class="check-icon">&#10003;</div>
+    <h2>Adicionado ao carrinho!</h2>
+    <p id="thankMsg">Produto adicionado ao carrinho!</p>
+    <button class="btn-fechar" onclick="closeModal()">Continuar comprando</button>
+  </div>
+</div>
+
+<button class="chat-toggle" id="chatToggle" onclick="toggleChat()">
+  <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"></path><path d="M7 9h10v2H7zm0-3h10v2H7zm0 6h7v2H7z"></path></svg>
+</button>
+
+<div class="chat-box" id="chatBox">
+  <div class="chat-header">
+    <div class="online-dot"></div>
+    NovaBot — Assistente Supernova
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-msg bot">
+      Ola! Sou a NovaBot. Posso te ajudar com exercicios, equipamentos, precos e frete. Pergunte qualquer coisa!
+    </div>
+  </div>
+  <div class="chat-input-area">
+    <input type="text" id="chatInput" placeholder="Digite sua duvida..." onkeypress="if(event.key==='Enter')sendChat()">
+    <button onclick="sendChat()">Enviar</button>
+  </div>
+</div>
+
+<script>
+// ============ ESTRELAS ============
+(function(){
+  var c = document.getElementById('starsContainer');
+  for(var i = 0; i < 120; i++){
+    var s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = Math.random()*100 + '%';
+    s.style.top = Math.random()*100 + '%';
+    s.style.setProperty('--dur', (1.5 + Math.random()*3) + 's');
+    s.style.width = s.style.height = (1 + Math.random()*2) + 'px';
+    s.style.animationDelay = (Math.random()*3) + 's';
+    c.appendChild(s);
+  }
+})();
+
+// ============ DADOS DOS PRODUTOS ============
+var products = [
+  {
+    id: 1, name: "Luvas de Boxe Pro 12oz", cat: "boxe",
+    img: "https://m.media-amazon.com/images/I/71CZkiraEjL._AC_SX679_.jpg",
+    price: 179.90, oldPrice: 249.90, rating: 4.8, reviews: 1423,
+    freteGratis: false,
+    discount: "28% OFF na Black Friday (28/11)",
+    exercises: [
+      "Soco direto e jab no saco de treino",
+      "Sparring com protecao completa",
+      "Sombra boxing — tecnica e velocidade",
+      "Cardio rounds de 3 min"
+    ]
+  },
+  {
+    id: 2, name: "Saco de Pancada 1,80m", cat: "boxe",
+    img: "https://http2.mlstatic.com/D_NQ_NP_767402-MLB45229098012_032021-O.jpg",
+    price: 329.90, oldPrice: 449.90, rating: 4.6, reviews: 876,
+    freteGratis: true,
+    discount: "27% OFF no Natal (25/12)",
+    exercises: [
+      "Socos diretos — forca e precisao",
+      "Ganchos — potencia lateral",
+      "Uppercuts — ataque de baixo",
+      "Combos encadeados de golpes"
+    ]
+  },
+  {
+    id: 3, name: "Caneleiras Pro Muay Thai", cat: "boxe",
+    img: "https://down-br.img.susercontent.com/file/br-11134207-7qukw-lix5560j4tkg54",
+    price: 74.90, oldPrice: null, rating: 4.4, reviews: 534,
+    freteGratis: false,
+    discount: "15% OFF no Carnaval (28/02)",
+    exercises: [
+      "Chute frontal — impacto com canela",
+      "Low kick — desestabilizacao",
+      "Bloqueio — defesa de canela",
+      "Condicionamento osseo progressivo"
+    ]
+  },
+  {
+    id: 4, name: "Capacete de Protecao Boxe", cat: "boxe",
+    img: "https://images.tcdn.com.br/img/img_prod/129217/head_guard_capacete_de_boxe_mks_combat_competition_3984_1_3471f048db3a3632ea0246af37076b3d.jpg",
+    price: 139.90, oldPrice: 189.90, rating: 4.5, reviews: 398,
+    freteGratis: false,
+    discount: "26% OFF na Black Friday (28/11)",
+    exercises: [
+      "Sparring com seguranca total",
+      "Treino de esquiva e reflexo",
+      "Bloqueio defensivo de cabeca",
+      "Condicionamento com absorcao"
+    ]
+  },
+  {
+    id: 5, name: "Protetor Bucal Termomoldavel", cat: "boxe",
+    img: "https://http2.mlstatic.com/D_NQ_NP_847765-CBT90020544149_082025-O.webp",
+    price: 29.90, oldPrice: 44.90, rating: 4.3, reviews: 956,
+    freteGratis: false,
+    discount: "33% OFF no Carnaval (28/02)",
+    exercises: [
+      "Sparring com protecao dental",
+      "Treino de saco com mordida",
+      "Luta de MMA com protetor",
+      "Competicao amadora e treinamento"
+    ]
+  },
+  {
+    id: 6, name: "Par de Halteres Emborrachado 10kg", cat: "musculacao",
+    img: "https://http2.mlstatic.com/D_NQ_NP_996198-MLB92900096935_092025-O.webp",
+    price: 124.90, oldPrice: 169.90, rating: 4.8, reviews: 2156,
+    freteGratis: false,
+    discount: "26% OFF na Black Friday (28/11)",
+    exercises: [
+      "Rosca direta — biceps",
+      "Rosca martelo — antebraço",
+      "Elevacao lateral — ombros",
+      "Extensao de triceps",
+      "Agachamento com halteres — pernas",
+      "Remada curvada — costas"
+    ]
+  },
+  {
+    id: 7, name: "Barra Olimpica 20kg Cromada", cat: "musculacao",
+    img: "https://tse3.mm.bing.net/th/id/OIP.AhQ1yO_nCPMTJKPyrhddcAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+    price: 579.90, oldPrice: 799.90, rating: 4.9, reviews: 892,
+    freteGratis: true,
+    discount: "27% OFF na Black Friday (28/11)",
+    exercises: [
+      "Supino — peitoral",
+      "Agachamento — pernas e gluteos",
+      "Levantamento terra — lombar",
+      "Desenvolvimento — ombros",
+      "Remada alta — costas e trapezio"
+    ]
+  },
+  {
+    id: 8, name: "Kit Anilhas 40kg com Rodizio", cat: "musculacao",
+    img: "https://tse3.mm.bing.net/th/id/OIP.Mv0ngIvxpxv12m1O3ZnSnwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+    price: 279.90, oldPrice: null, rating: 4.6, reviews: 674,
+    freteGratis: false,
+    discount: "15% OFF no Carnaval (28/02)",
+    exercises: [
+      "Agachamento com anilha — pernas",
+      "Levantamento terra — posterior + lombar",
+      "Press ombro — deltoide",
+      "Lunge (passada) — quadriceps",
+      "Curvada romena — posterior"
+    ]
+  },
+  {
+    id: 9, name: "Barra de Pull-Up Porta", cat: "musculacao",
+    img: "https://http2.mlstatic.com/D_NQ_NP_777131-CBT80254131026_112024-O.webp",
+    price: 89.90, oldPrice: 119.90, rating: 4.5, reviews: 2143,
+    freteGratis: false,
+    discount: "25% OFF na Black Friday (28/11)",
+    exercises: [
+      "Barra fixa pronada — costas",
+      "Barra fixa supinada — biceps",
+      "Elevacao de joelhos — abdominal",
+      "Muscle-up — avancado",
+      "Negativas — forca excentrica"
+    ]
+  },
+  {
+    id: 10, name: "Kit Elasticos 5 Niveis", cat: "treino-casa",
+    img: "https://http2.mlstatic.com/D_NQ_NP_662882-MLB83497158415_042025-O-kit-5-faixas-elasticas-fitness-treino-completo-casa-5-niveis.webp",
+    price: 64.90, oldPrice: 94.90, rating: 4.5, reviews: 3012,
+    freteGratis: false,
+    discount: "31% OFF na Black Friday (28/11)",
+    exercises: [
+      "Remada com elastico — costas",
+      "Supino com elastico — peito",
+      "Extensao de triceps — bracos",
+      "Agachamento com elastico — pernas",
+      "Abertura lateral — ombros",
+      "Flexao com resistencia — peito"
+    ]
+  },
+  {
+    id: 11, name: "Tapete Antiderrapante 10mm", cat: "treino-casa",
+    img: "https://http2.mlstatic.com/D_NQ_NP_902035-MLB41372229887_042020-O.webp",
+    price: 54.90, oldPrice: null, rating: 4.3, reviews: 1234,
+    freteGratis: false,
+    discount: "15% OFF no Natal (25/12)",
+    exercises: [
+      "Alongamento geral — flexibilidade",
+      "Yoga — equilibrio e postura",
+      "Abdominais — core",
+      "Prancha — estabilizacao lombar",
+      "Pilates — forca e flexibilidade"
+    ]
+  },
+  {
+    id: 12, name: "Banca de Supino Dobravel 450kg", cat: "treino-casa",
+    img: "https://http2.mlstatic.com/D_NQ_NP_950639-MLB88791994450_082025-O.webp",
+    price: 749.90, oldPrice: 999.90, rating: 4.7, reviews: 456,
+    freteGratis: true,
+    discount: "25% OFF no Natal (25/12)",
+    exercises: [
+      "Supino reto — peitoral",
+      "Supino inclinado — peitoral superior",
+      "Puxada por cima — costas",
+      "Elevacao de pernas — abdominal",
+      "Desenvolvimento com halteres — ombros",
+      "Rosca Scott — biceps"
+    ]
+  },
+  {
+    id: 13, name: "Manguito de Peso 2kg (par)", cat: "treino-casa",
+    img: "https://http2.mlstatic.com/D_NQ_NP_751930-MLB81264980822_122024-O.webp",
+    price: 44.90, oldPrice: null, rating: 4.2, reviews: 782,
+    freteGratis: false,
+    discount: "10% OFF no Carnaval (28/02)",
+    exercises: [
+      "Caminhada com peso — resistencia",
+      "Boxe com manguito — velocidade",
+      "Elevacao lateral — ombros",
+      "Extensao triceps — bracos",
+      "Agachamento com manguito — pernas"
+    ]
+  },
+  {
+    id: 14, name: "Roda Abdominal Pro", cat: "treino-casa",
+    img: "https://http2.mlstatic.com/D_NQ_NP_668057-MLU77827882064_072024-O.webp",
+    price: 59.90, oldPrice: 79.90, rating: 4.6, reviews: 1654,
+    freteGratis: false,
+    discount: "25% OFF na Black Friday (28/11)",
+    exercises: [
+      "Rolamento frontal — core completo",
+      "Rolamento obliquo — obliquos",
+      "Prancha com roda — estabilidade",
+      "Rolamento joelhos — iniciantes",
+      "Pike roll — ombros + core"
+    ]
+  },
+  {
+    id: 15, name: "Corda de Pular Speed Rope", cat: "cardio",
+    img: "https://th.bing.com/th/id/OIP.QY5iTd-6Ek497q_sTpVF6gHaHg?w=201&h=203&c=7&r=0&o=7&pid=1.7&rm=3",
+    price: 37.90, oldPrice: 52.90, rating: 4.7, reviews: 3891,
+    freteGratis: false,
+    discount: "28% OFF no Carnaval (28/02)",
+    exercises: [
+      "Pulo basico — cardio intenso",
+      "Pulo alternado — coordenacao",
+      "Duplo — explosao e velocidade",
+      "Cruza — agilidade",
+      "HIIT com corda — alta intensidade"
+    ]
+  },
+  {
+    id: 16, name: "Corda de Batalha 12m + Ancoragem", cat: "cardio",
+    img: "https://http2.mlstatic.com/D_NQ_NP_681906-CBT89803198961_082025-O.webp",
+    price: 209.90, oldPrice: 289.90, rating: 4.8, reviews: 321,
+    freteGratis: false,
+    discount: "27% OFF na Black Friday (28/11)",
+    exercises: [
+      "Ondas alternadas — ombros e core",
+      "Ondas simultaneas — explosao",
+      "Ondas laterais — obliquos",
+      "Burpee + corda — cardio completo",
+      "Prancha + onda — estabilizacao"
+    ]
+  }
+];
+
+// ============ CARRINHO ============
+var cart = [];
+
+function addToCart(productId) {
+  var prod = products.find(function(p){ return p.id === productId; });
+  if (!prod) return;
+  var existing = cart.find(function(c){ return c.id === productId; });
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ id: prod.id, name: prod.name, img: prod.img, price: prod.price, freteGratis: prod.freteGratis, qty: 1 });
+  }
+  updateCartUI();
+  showToast(prod.name + ' adicionado ao carrinho');
+  openCart();
+}
+
+function removeFromCart(productId) {
+  cart = cart.filter(function(c){ return c.id !== productId; });
+  updateCartUI();
+}
+
+function changeQty(productId, delta) {
+  var item = cart.find(function(c){ return c.id === productId; });
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty < 1) { removeFromCart(productId); return; }
+  updateCartUI();
+}
+
+function updateCartUI() {
+  var totalItems = cart.reduce(function(s,c){ return s + c.qty; }, 0);
+  document.getElementById('cartCount').textContent = totalItems;
+
+  var body = document.getElementById('cartBody');
+  var footer = document.getElementById('cartFooter');
+
+  if (cart.length === 0) {
+    body.innerHTML = '<div class="cart-empty"><div class="cart-empty-icon">&#128722;</div><p>Seu carrinho esta vazio</p><span>Adicione produtos para comecar</span></div>';
+    footer.style.display = 'none';
+    return;
+  }
+
+  footer.style.display = 'block';
+  var html = '';
+  for (var i = 0; i < cart.length; i++) {
+    var c = cart[i];
+    var freteLbl = c.freteGratis ? '<span class="frete-gratis">Frete gratis</span>' : '<span class="frete-pago">Frete R$ 15,00</span>';
+    html += '<div class="cart-item">';
+    html += '  <img class="cart-item-img" src="' + c.img + '" alt="' + c.name + '">';
+    html += '  <div class="cart-item-info">';
+    html += '    <div class="cart-item-name">' + c.name + '</div>';
+    html += '    <div class="cart-item-price">R$ ' + (c.price * c.qty).toFixed(2).replace('.', ',') + '</div>';
+    html += '    <div class="cart-item-frete">' + freteLbl + '</div>';
+    html += '    <div class="cart-qty-row">';
+    html += '      <button class="cart-qty-btn" onclick="changeQty(' + c.id + ',-1)">&#8722;</button>';
+    html += '      <span class="cart-qty-val">' + c.qty + '</span>';
+    html += '      <button class="cart-qty-btn" onclick="changeQty(' + c.id + ',1)">+</button>';
+    html += '      <button class="cart-item-remove" onclick="removeFromCart(' + c.id + ')">Remover</button>';
+    html += '    </div>';
+    html += '  </div>';
+    html += '</div>';
+  }
+  body.innerHTML = html;
+
+  var subtotal = cart.reduce(function(s,c){ return s + c.price * c.qty; }, 0);
+  var hasPaidFrete = cart.some(function(c){ return !c.freteGratis; });
+  var frete = (subtotal >= 299) ? 0 : (hasPaidFrete ? 15 : 0);
+  var total = subtotal + frete;
+
+  document.getElementById('cartSubtotal').textContent = 'R$ ' + subtotal.toFixed(2).replace('.', ',');
+  document.getElementById('cartFrete').textContent = frete === 0 ? 'Gratis' : 'R$ ' + frete.toFixed(2).replace('.', ',');
+  document.getElementById('cartTotal').textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+}
+
+function openCart() {
+  document.getElementById('cartOverlay').classList.add('active');
+  document.getElementById('cartDrawer').classList.add('open');
+}
+function closeCart() {
+  document.getElementById('cartOverlay').classList.remove('active');
+  document.getElementById('cartDrawer').classList.remove('open');
+}
+
+function showToast(msg) {
+  var old = document.getElementById('toast');
+  if (old) old.remove();
+  var t = document.createElement('div');
+  t.id = 'toast';
+  t.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#ff6c28,#ff3c6f);color:#fff;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:700;z-index:500;animation:toastIn .3s ease,toastOut .3s ease 2.2s forwards;box-shadow:0 4px 20px rgba(255,60,111,0.3);font-family:Segoe UI,Arial,sans-serif;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  var s = document.createElement('style');
+  s.textContent = '@keyframes toastIn{0%{opacity:0;transform:translateX(-50%) translateY(-12px)}100%{opacity:1;transform:translateX(-50%) translateY(0)}}@keyframes toastOut{0%{opacity:1}100%{opacity:0;transform:translateX(-50%) translateY(-12px)}}';
+  document.head.appendChild(s);
+  setTimeout(function(){ if(document.getElementById('toast')) document.getElementById('toast').remove(); }, 2600);
+}
+
+// ============ VANTAGENS TOGGLE ============
+function toggleVantagens(id) {
+  var panel = document.getElementById('vpanel-' + id);
+  var btn = document.getElementById('vbtn-' + id);
+  if (panel && btn) {
+    panel.classList.toggle('open');
+    btn.classList.toggle('open');
+  }
+}
+
+// ============ RENDERIZAR PRODUTOS ============
+function renderProducts(filter) {
+  filter = filter || 'todos';
+  var grid = document.getElementById('productsGrid');
+  var filtered = filter === 'todos' ? products : products.filter(function(p){ return p.cat === filter; });
+
+  var html = '';
+  for (var i = 0; i < filtered.length; i++) {
+    var p = filtered[i];
+    var discountPct = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+    var freteLabel = p.freteGratis ? 'Frete gratis' : 'Frete: R$ 15,00';
+    var freteClass = p.freteGratis ? 'frete-gratis' : 'frete-pago';
+    var parcelas = (p.price / 12).toFixed(2).replace('.', ',');
+
+    var fullStars = Math.floor(p.rating);
+    var emptyStars = 5 - fullStars;
+    var starsHTML = '';
+    for (var s = 0; s < fullStars; s++) starsHTML += '\u2605';
+    for (var e = 0; e < emptyStars; e++) starsHTML += '\u2606';
+
+    var freteBadge = p.freteGratis ? '<span class="vantagens-badge badge-green">Frete gratis</span>' : '';
+    var descBadge = p.oldPrice ? '<span class="vantagens-badge badge-orange">' + discountPct + '% OFF</span>' : '';
+    var parcelaBadge = '<span class="vantagens-badge badge-purple">12x s/ juros</span>';
+
+    html += '<div class="product-card" data-cat="' + p.cat + '">';
+    html += '  <div class="product-img-wrap">';
+    html += '    <img src="' + p.img + '" alt="' + p.name + '" loading="lazy">';
+    if (p.oldPrice) html += '    <div class="discount-tag">' + discountPct + '% OFF</div>';
+    html += '  </div>';
+
+    html += '  <div class="product-info">';
+    html += '    <div class="product-name">' + p.name + '</div>';
+    html += '    <div class="product-rating">' + starsHTML + ' <span class="rating-num">' + p.rating + ' (' + p.reviews.toLocaleString('pt-BR') + ')</span></div>';
+    html += '    <div class="product-price">R$ ' + p.price.toFixed(2).replace('.',',');
+    if (p.oldPrice) html += '<span class="old-price">R$ ' + p.oldPrice.toFixed(2).replace('.',',') + '</span>';
+    html += '</div>';
+    html += '    <div class="product-parcelas">ou 12x de R$ ' + parcelas + ' sem juros</div>';
+    html += '    <div class="product-frete ' + freteClass + '">' + freteLabel + '</div>';
+    html += '  </div>';
+
+    html += '  <button class="vantagens-toggle" id="vbtn-' + p.id + '" onclick="toggleVantagens(' + p.id + ')">';
+    html += '    Ver vantagens <span class="arrow">&#9660;</span>';
+    html += '  </button>';
+
+    html += '  <div class="vantagens-panel" id="vpanel-' + p.id + '">';
+    html += '    <div class="vantagens-title">Vantagens</div>';
+    html += '    <ul class="vantagens-list">';
+    for (var j = 0; j < p.exercises.length; j++) {
+      html += '      <li>' + p.exercises[j] + '</li>';
+    }
+    html += '    </ul>';
+    html += '    <div class="vantagens-discount">Proximo desconto: <strong>' + p.discount + '</strong></div>';
+    html += '    <div class="vantagens-badges">' + freteBadge + descBadge + parcelaBadge + '</div>';
+    html += '  </div>';
+
+    html += '  <button class="btn-comprar" onclick="addToCart(' + p.id + ')">Adicionar ao carrinho</button>';
+    html += '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+renderProducts();
+
+// ============ FILTRO DE CATEGORIAS ============
+var catButtons = document.querySelectorAll('.cat-btn');
+for (var b = 0; b < catButtons.length; b++) {
+  catButtons[b].addEventListener('click', function(){
+    var cat = this.getAttribute('data-cat');
+    for (var k = 0; k < catButtons.length; k++) catButtons[k].classList.remove('active');
+    this.classList.add('active');
+    renderProducts(cat);
+  });
+}
+
+// ============ MODAL ANTIGO ============
+function closeModal() { document.getElementById('thankModal').classList.remove('active'); }
+
+// ============ CHECKOUT ============
+var currentStep = 1;
+
+function openCheckout() {
+  if (cart.length === 0) return;
+  closeCart();
+  currentStep = 1;
+  updateStepUI();
+  buildResumo();
+  document.getElementById('checkoutSuccess').style.display = 'none';
+  document.getElementById('confirmArea').style.display = 'block';
+  document.getElementById('checkoutOverlay').classList.add('active');
+}
+
+function closeCheckout() {
+  document.getElementById('checkoutOverlay').classList.remove('active');
+}
+
+function goToStep(n) {
+  if (n > currentStep) return;
+  currentStep = n;
+  updateStepUI();
+}
+
+function updateStepUI() {
+  for (var i = 1; i <= 3; i++) {
+    var tab = document.getElementById('stepTab' + i);
+    var cont = document.getElementById('step' + i);
+    tab.classList.remove('active', 'done');
+    cont.classList.remove('active');
+    if (i === currentStep) { tab.classList.add('active'); cont.classList.add('active'); }
+    else if (i < currentStep) { tab.classList.add('done'); }
+  }
+}
+
+function validateStep1() {
+  var ok = true;
+  var cpf = document.getElementById('ckCpf');
+  var email = document.getElementById('ckEmail');
+  var senha = document.getElementById('ckSenha');
+  var tel = document.getElementById('ckTel');
+
+  if (!validCpf(cpf.value)) { cpf.classList.add('error'); cpf.classList.remove('valid'); show('errCpf'); ok = false; }
+  else { cpf.classList.remove('error'); cpf.classList.add('valid'); hide('errCpf'); }
+
+  if (!validEmail(email.value)) { email.classList.add('error'); email.classList.remove('valid'); show('errEmail'); ok = false; }
+  else { email.classList.remove('error'); email.classList.add('valid'); hide('errEmail'); }
+
+  if (senha.value.length < 6) { senha.classList.add('error'); senha.classList.remove('valid'); show('errSenha'); ok = false; }
+  else { senha.classList.remove('error'); senha.classList.add('valid'); hide('errSenha'); }
+
+  if (!validTel(tel.value)) { tel.classList.add('error'); tel.classList.remove('valid'); show('errTel'); ok = false; }
+  else { tel.classList.remove('error'); tel.classList.add('valid'); hide('errTel'); }
+
+  if (ok) { currentStep = 2; updateStepUI(); }
+}
+
+function validateStep2() {
+  var ok = true;
+  var fields = [
+    ['ckCep','errCep', function(v){ return /^\d{5}-?\d{3}$/.test(v); }],
+    ['ckNum','errNum', function(v){ return v.trim().length > 0; }],
+    ['ckRua','errRua', function(v){ return v.trim().length > 0; }],
+    ['ckBairro','errBairro', function(v){ return v.trim().length > 0; }],
+    ['ckCidade','errCidade', function(v){ return v.trim().length > 0; }],
+    ['ckEstado','errEstado', function(v){ return /^[A-Za-z]{2}$/.test(v.trim()); }]
+  ];
+  for (var i = 0; i < fields.length; i++) {
+    var inp = document.getElementById(fields[i][0]);
+    var fn = fields[i][2];
+    if (!fn(inp.value)) { inp.classList.add('error'); inp.classList.remove('valid'); show(fields[i][1]); ok = false; }
+    else { inp.classList.remove('error'); inp.classList.add('valid'); hide(fields[i][1]); }
+  }
+  if (ok) { currentStep = 3; updateStepUI(); buildResumo(); }
+}
+
+function confirmOrder() {
+  document.getElementById('checkoutSuccess').style.display = 'block';
+  document.getElementById('confirmArea').style.display = 'none';
+  cart = [];
+  updateCartUI();
+}
+
+function finishAll() {
+  closeCheckout();
+}
+
+function buildResumo() {
+  var div = document.getElementById('checkoutResumo');
+  var subtotal = cart.reduce(function(s,c){ return s + c.price * c.qty; }, 0);
+  var hasPaidFrete = cart.some(function(c){ return !c.freteGratis; });
+  var frete = (subtotal >= 299) ? 0 : (hasPaidFrete ? 15 : 0);
+  var total = subtotal + frete;
+
+  var h = '<div class="resumo-title">Resumo do pedido</div>';
+  for (var i = 0; i < cart.length; i++) {
+    h += '<div class="resumo-item"><span>' + cart[i].name + ' <span class="qtd">x' + cart[i].qty + '</span></span><span>R$ ' + (cart[i].price * cart[i].qty).toFixed(2).replace('.',',') + '</span></div>';
+  }
+  h += '<div class="resumo-item"><span>Frete</span><span>' + (frete === 0 ? 'Gratis' : 'R$ 15,00') + '</span></div>';
+  h += '<div class="resumo-total"><span class="label">Total</span><span class="value">R$ ' + total.toFixed(2).replace('.',',') + '</span></div>';
+
+  h += '<div style="margin-top:14px;font-size:11px;color:#8888aa;line-height:1.6;">';
+  h += '<strong style="color:#d0d0e5;">Dados:</strong><br>';
+  h += 'CPF: ' + document.getElementById('ckCpf').value + '<br>';
+  h += 'E-mail: ' + document.getElementById('ckEmail').value + '<br>';
+  h += 'Tel: ' + document.getElementById('ckTel').value + '<br>';
+  h += 'End: ' + document.getElementById('ckRua').value + ', ' + document.getElementById('ckNum').value;
+  if (document.getElementById('ckComp').value) h += ' - ' + document.getElementById('ckComp').value;
+  h += '<br>';
+  h += document.getElementById('ckBairro').value + ', ' + document.getElementById('ckCidade').value + ' - ' + document.getElementById('ckEstado').value;
+  h += '<br>CEP: ' + document.getElementById('ckCep').value;
+  h += '</div>';
+
+  div.innerHTML = h;
+}
+
+function show(id) { document.getElementById(id).classList.add('show'); }
+function hide(id) { document.getElementById(id).classList.remove('show'); }
+
+function validCpf(v) { v = v.replace(/\D/g,''); if (v.length !== 11) return false; var s=0; for(var i=0;i<9;i++) s += parseInt(v[i])*(10-i); var r = 11 - (s%11); if(r>9)r=0; if(r!==parseInt(v[9]))return false; s=0; for(var i=0;i<10;i++) s += parseInt(v[i])*(11-i); r=11-(s%11); if(r>9)r=0; return r===parseInt(v[10]); }
+function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+function validTel(v) { v=v.replace(/\D/g,''); return v.length >= 10 && v.length <= 11; }
+
+function maskCpf(el) { var v=el.value.replace(/\D/g,''); if(v.length>11)v=v.slice(0,11); if(v.length>9)v=v.replace(/(\d{3})(\d{3})(\d{3})/,'$1.$2.$3'); else if(v.length>6)v=v.replace(/(\d{3})(\d{3})/,'$1.$2'); else if(v.length>3)v=v.replace(/(\d{3})/,'$1'); el.value=v; if(v.length===11){var dot=v.indexOf('.'); if(dot!==-1){v=v.replace(/\./g,''); v=v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4'); el.value=v;}} }
+function maskTel(el) { var v=el.value.replace(/\D/g,''); if(v.length>11)v=v.slice(0,11); if(v.length>6)v=v.replace(/(\d{2})(\d{5})(\d{0,4})/,'($1) $2-$3'); else if(v.length>2)v=v.replace(/(\d{2})(\d{0,5})/,'($1) $2'); el.value=v; }
+function maskCep(el) { var v=el.value.replace(/\D/g,''); if(v.length>8)v=v.slice(0,8); if(v.length>5)v=v.replace(/(\d{5})(\d{0,3})/,'$1-$2'); el.value=v; }
+
+// ============ CHAT IA ============
+var chatKnowledge = {
+  "luvas de boxe": "As luvas de boxe Pro 12oz protegem maos e punhos no impacto. Ideais para saco e sparring. Preco: R$179,90 | Frete: R$15. Nota: 4.8",
+  "saco de pancada": "O saco de pancada 1,80m e excelente para forca, precisao e cardio. Queima ate 400 cal por sessao! Preco: R$329,90 com frete gratis.",
+  "halteres": "Halteres emborrachados 10kg sao versateis! Biceps, ombros, pernas, costas — tudo com um par. Preco: R$124,90 | Frete: R$15. Nota: 4.8",
+  "elastico": "Os elasticos de resistencia 5 niveis sao perfeitos para treino em casa! Leves e eficientes. Preco: R$64,90 | Frete: R$15.",
+  "corda de pular": "A Speed Rope queima ate 15 cal/min! Coordenacao + cardio + pernas. Preco: R$37,90 | Frete: R$15. Nota: 4.7",
+  "barra olimpica": "A barra olimpica 20kg e o equipamento mais completo de forca! Preco: R$579,90 com frete gratis.",
+  "banca de supino": "A banca de supino dobravel suporta 450kg e permite treino completo em casa. Preco: R$749,90 com frete gratis! Nota: 4.7",
+  "tapete": "O tapete antiderrapante 10mm e essencial para conforto em yoga, pilates e abdominais. Preco: R$54,90 | Frete: R$15.",
+  "corda de batalha": "Corda de batalha 12m e o melhor cardio+forca para ombros e core! Preco: R$209,90 | Frete: R$15. Nota: 4.8",
+  "anilha": "Anilhas 40kg complementam a barra para progressao de carga. Preco: R$279,90 | Frete: R$15.",
+  "caneleira": "Caneleiras Pro Muay Thai protegem em chutes de impacto. Preco: R$74,90 | Frete: R$15.",
+  "capacete": "O capacete de protecao e obrigatorio para sparring! Preco: R$139,90 | Frete: R$15. Nota: 4.5",
+  "pull-up": "A barra de pull-up para porta e perfeita para costas e biceps em casa! Preco: R$89,90 | Frete: R$15. Nota: 4.5",
+  "roda abdominal": "A roda abdominal Pro trabalha core completo com eficiencia! Preco: R$59,90 | Frete: R$15.",
+  "manguito": "Manguitos de peso 2kg (par) para treino de resistencia e cardio. Preco: R$44,90 | Frete: R$15.",
+  "protetor bucal": "Protetor bucal termomoldavel e essencial para lutas. Preco: R$29,90 | Frete: R$15.",
+  "frete": "Frete gratis para compras acima de R$299! Abaixo, frete fixo de R$15,00. Entrega em 3-7 dias uteis para todo o Brasil.",
+  "desconto": "Descontos explosivos na Supernova! Black Friday (28/11) — ate 35% OFF, Natal (25/12) — ate 25% OFF, Carnaval (28/02) — ate 15% OFF.",
+  "biceps": "Para biceps: halteres (rosca direta R$124,90 | Frete: R$15), barra de pull-up (R$89,90 | Frete: R$15) ou elasticos (R$64,90 | Frete: R$15).",
+  "pernas": "Para pernas: halteres (R$124,90 | Frete: R$15), barra olimpica (R$579,90 com frete gratis), anilhas (R$279,90 | Frete: R$15). Complemente com corda de pular (R$37,90 | Frete: R$15)!",
+  "cardio": "Para cardio: corda de pular (R$37,90 | Frete: R$15), corda de batalha (R$209,90 | Frete: R$15) e saco de pancada (R$329,90 com frete gratis).",
+  "casa": "Para treino em casa: elasticos (R$64,90 | Frete: R$15), tapete (R$54,90 | Frete: R$15), halteres (R$124,90 | Frete: R$15), corda (R$37,90 | Frete: R$15), roda abdominal (R$59,90 | Frete: R$15) e banca de supino (R$749,90 com frete gratis)."
+};
+
+function toggleChat() {
+  document.getElementById('chatBox').classList.toggle('active');
+}
+
+function sendChat() {
+  var input = document.getElementById('chatInput');
+  var msg = input.value.trim();
+  if (!msg) return;
+  addChatMsg(msg, 'user');
+  input.value = '';
+  setTimeout(function() {
+    var lower = msg.toLowerCase();
+    var response = '';
+    var keys = Object.keys(chatKnowledge);
+    for (var i = 0; i < keys.length; i++) {
+      if (lower.indexOf(keys[i]) !== -1) { response = chatKnowledge[keys[i]]; break; }
+    }
+    if (!response) {
+      response = "Nao encontrei algo especifico, mas posso ajudar com: luvas de boxe, saco de pancada, halteres, elasticos, corda de pular, barra olimpica, banca de supino, tapete, corda de batalha, anilhas, caneleiras, capacete, pull-up, roda abdominal, manguito, protetor bucal, frete, descontos, biceps, pernas, cardio ou treino em casa. Pergunte!";
+    }
+    addChatMsg(response, 'bot');
+  }, 600);
+}
+
+function addChatMsg(text, type) {
+  var container = document.getElementById('chatMessages');
+  var div = document.createElement('div');
+  div.className = 'chat-msg ' + type;
+  div.textContent = text;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+</script>
+
+</body>
+</html>
